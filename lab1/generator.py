@@ -276,6 +276,6 @@ def insert_data_into_merit_points_table():
 # insert_data_into_subjects()
 # insert_data_into_grade_subject_maps()
 # insert_data_into_teacher_grade_subject_maps()
-insert_data_into_merit_points_table()
+# insert_data_into_merit_points_table()
 
 conn.close()
