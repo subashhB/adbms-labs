@@ -40,8 +40,23 @@ JOIN subjects s on s.id = gsm.subject_id
 WHERE s.name = 'Computer Science'
 
 -- 7. Write a SQL that shows the total merit points of all the students for subject Computer of Class 10.
-
+SELECT s.id as student_id,u.name, SUM(point)
+FROM merit_points mp
+JOIN students s ON s.id = mp.id
+JOIN users u ON u.id = s.user_id
+JOIN subjects sb ON sb.id = mp.subject_id
+WHERE sb.name = 'Computer Science'
+GROUP BY u.name, s.id
+;
 
 -- 8. Write a SQL that shows the merit points for all subjects of any student.
+SELECT sb.name as subject_name, u.name as student_name, SUM(mp.point) AS total
+FROM merit_points mp
+JOIN students s ON s.id = mp.student_id
+JOIN users u ON u.id = s.user_id
+JOIN subjects sb ON sb.id = mp.subject_id
+where s.id = 12
+GROUP BY sb.name, u.name
+ORDER BY sb.name;
 
 -- 9. To simulate a notification event, lets create a notifications table that contains following columns (id, user_device_token, headers, message, deeplink, is_notification_sent, created_at, deleted_at). Create a trigger that inserts data into the notifications table every time a data is added in merit_points table. Use "Merit point update" as header and "Your merit point has been updated by teacher" as body, "https://deeplink.testdeeplink.com/deeplink" as deeplink, false as is_notificat ion_sent.
