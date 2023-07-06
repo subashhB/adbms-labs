@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id                 Int                 @id @default(autoincrement())
+  email              String              @unique @db.VarChar(55)
+  name               String              @db.VarChar(30)
+  gender             Gender
+  dob                DateTime
+  mobile_number      String              @db.VarChar(10)
+  password           String              @db.VarChar(50)
+  created_at         DateTime
+  updated_at         DateTime
+  user_device_tokens user_device_tokens?
+  teachers           teachers[]
+  parents            parents[]
+  students           students[]
+}
+
+model user_device_tokens {
+  id           Int      @id @default(autoincrement())
+  device_token String   @default(uuid())
+  created_at   DateTime
+  updated_at   DateTime
+  user         users    @relation(fields: [usersId], references: [id])
+  usersId      Int      @unique
+}
+
+model teachers {
+  id           Int            @id @default(autoincrement())
+  user_id      Int
+  user         users          @relation(fields: [user_id], references: [id])
+  grades       grades[]
+  subject      subjects[]
+  created_at   DateTime
+  updated_at   DateTime
+  merit_points merit_points[]
+}
+
+model parents {
+  id         Int        @id @default(autoincrement())
+  user_id    Int
+  user       users      @relation(fields: [user_id], references: [id])
+  student_id Int
+  students   students[]
+  created_at DateTime
+  updated_at DateTime
+}
+
+model subjects {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(50)
+  teachers     teachers[]
+  grades       grades[]
+  created_at   DateTime
+  updated_at   DateTime
+  merit_points merit_points[]
+}
+
+model grades {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(10)
+  name_char  String     @db.VarChar(20)
+  section    String     @db.VarChar(5)
+  students   students[]
+  teachers   teachers[]
+  subjects   subjects[]
+  created_at DateTime
+  updated_at DateTime
+}
+
+model students {
+  id           Int            @id @default(autoincrement())
+  user_id      Int
+  user         users          @relation(fields: [usersId], references: [id])
+  grade_id     Int
+  grade        grades         @relation(fields: [grade_id], references: [id])
+  usersId      Int
+  parents      parents[]
+  created_at   DateTime
+  updated_at   DateTime
+  merit_points merit_points[]
+}
+
+model merit_points {
+  id         Int      @id @default(autoincrement())
+  teacher    teachers @relation(fields: [teachersId], references: [id])
+  subject    subjects @relation(fields: [subjectsId], references: [id])
+  student    students @relation(fields: [studentsId], references: [id])
+  teachersId Int
+  subjectsId Int
+  studentsId Int
+  point      Int
+  remark     String   @db.VarChar(50)
+  terminal   Int
+  created_at DateTime
+  updated_at DateTime
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
